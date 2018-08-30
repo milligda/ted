@@ -1,0 +1,36 @@
+<div class="headlines-page-container">
+
+    <div class="title-container headlines-title-container">
+        <h1><a href="/">Top Headlines</a></h1>
+        <h4 class="title-date"><a href="/">{{today}}</a></h4>
+    </div>
+
+    <div id="headlines-container">
+        {{#each articleGroup}}
+            <div class="headline-button" data-id="{{headlineSlug}}">{{headline}}</div>
+        {{/each}}
+    </div>
+
+</div>
+
+<div id="bottom-nav-container">
+    <img class="nav-icon nav-slider-trigger" src="/images/nav-icon.svg">
+</div>
+
+
+
+<div class="side-slider-container">
+
+    {{> nav-slider}}
+    {{> user-activity-slider}}
+    {{> add-bundle-slider}}
+                    
+    {{#each articleGroup}}
+        {{> headlines-slider}}
+    {{/each}}
+
+    {{#each allArticles}}
+        {{> article-slider}}
+    {{/each}}
+    
+</div>

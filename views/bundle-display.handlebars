@@ -1,0 +1,37 @@
+<div class="bundle-page-container">
+
+    <div class="title-container bundle-title-container">
+        <h1><a class="nav-slider-trigger">{{bundleName}} Articles</a></h1>
+    </div>
+
+    <div class="sharethis-inline-share-buttons"></div>
+
+    <div id="bundle-articles-container">
+
+        {{#each bundleArticles}}
+            <div class="article-summary article-slider-trigger" data-id="{{id}}">
+                <img class="article-summary-image article-slider-trigger" src="{{articleImgLg}}" data-id="{{id}}">
+                <h3 class="article-summary-title article-slider-trigger" data-id="{{id}}">{{title}}</h3>
+                <p class="article-summary-publication article-slider-trigger" data-id="{{id}}">{{publication}}</p>
+                <p class = "article-worthy-count article-slider-trigger" data-id="{{id}}"> <span style= "color:#283860"> {{worthyScore}} </span> {{humanCount}} deemed this article news worthy</p>
+	    	</div>
+        {{/each}}
+    </div>
+
+</div>
+
+<div id="bottom-nav-container">
+    <img class="nav-icon nav-slider-trigger" src="/images/nav-icon.svg">
+</div>
+
+<div class="side-slider-container">
+
+    {{> nav-slider}}
+    {{> user-activity-slider}}
+    {{> add-bundle-slider}}
+
+    {{#each bundleArticles}}
+        {{> article-slider}}
+    {{/each}}
+    
+</div>
