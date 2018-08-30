@@ -16,6 +16,10 @@ var TalkSchema = new Schema({
         type: String,
         required: true
     },
+    talk_length: {
+        type: String,
+        required: true
+    },
     url: {
         type: String,
         required: true
