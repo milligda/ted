@@ -27,12 +27,23 @@ module.exports = function(app) {
         res.render("recent", displayObj);
     });
 
+    app.get("/favorites", function(req, res) {
+
+        var displayObj = {
+            title: "Favorite Talks",
+        }
+
+        res.render("favorites", displayObj);
+    });
+
     app.get("/scrape", function(req, res) {
         request("https://www.ted.com/talks", function(error, response, html) {
 
             var $ = cheerio.load(html);
 
-            $("div.talk-link").each(function(i, element) {
+            var newTalks = [];
+
+            $("div.talk-link").each(function(i, element, newPosts) {
 
                 var result = {};
 
@@ -68,25 +79,45 @@ module.exports = function(app) {
                 result.presenter = presenter;
                 result.image_url = imageUrl;
 
-                db.Talk.find({url: url}, function(err, response) {
-                    if (! response.length) {
-                        db.Talk.create(result)
-                        .then(function(dbTalk) {
-                            console.log(dbTalk);
-                        })
-                        .catch(function(err) {
-                            return res.json(err);
-                        });
+                db.Talk.findOneAndUpdate(
+                    { "url": url },
+                    result,
+                    { upsert: true, new: true }, 
+                    function(err, response) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                            console.log(response);
+                        }
                     }
-                });
+                );
             });
         });
-
         res.json({ scraped: true });
     });
 
-    app.get("/api-talks", function(req, res) {
-        db.Talk.find({}).sort({ date: -1 }).limit(20)
+    app.get("/api/all-talks", function(req, res) {
+        db.Talk.find({})
+        .then(function(dbTalks) {
+            res.json(dbTalks);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+    });
+
+    app.get("/api/recent-talks", function(req, res) {
+        db.Talk.find({}).limit(20)
+        .then(function(dbTalks) {
+            res.json(dbTalks);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+    });
+
+    app.get("/api/saved-talks", function(req, res) {
+        db.Talk.find({}).limit(20)
         .then(function(dbTalks) {
             res.json(dbTalks);
         })
