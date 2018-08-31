@@ -19,15 +19,18 @@ mongoose.connect("mongodb://localhost/tedTalks");
 
 module.exports = function(app) {
     app.get("/", function(req, res) {
-        res.send("Hello World");
+
+        var displayObj = {
+            title: "Recent Talks",
+        }
+
+        res.render("recent", displayObj);
     });
 
     app.get("/scrape", function(req, res) {
         request("https://www.ted.com/talks", function(error, response, html) {
 
             var $ = cheerio.load(html);
-
-            var talksScraped = 0;
 
             $("div.talk-link").each(function(i, element) {
 
@@ -70,7 +73,6 @@ module.exports = function(app) {
                         db.Talk.create(result)
                         .then(function(dbTalk) {
                             console.log(dbTalk);
-                            talksScraped++;
                         })
                         .catch(function(err) {
                             return res.json(err);
@@ -78,13 +80,13 @@ module.exports = function(app) {
                     }
                 });
             });
-
-            res.json({talksAdded: talksScraped});
         });
+
+        res.json({ scraped: true });
     });
 
     app.get("/api-talks", function(req, res) {
-        db.Talk.find({})
+        db.Talk.find({}).sort({ date: -1 }).limit(20)
         .then(function(dbTalks) {
             res.json(dbTalks);
         })

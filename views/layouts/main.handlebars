@@ -4,26 +4,23 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>{{title}} | News Worthy</title>
-  {{> metadata}}
+  <title>{{title}} | TED Talks</title>
 
-  <link rel="stylesheet" type="text/css" href="/css/reset.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/reset.css">
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css">
   <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/themes/smoothness/jquery-ui.css">
-  <link href="https://fonts.googleapis.com/css?family=Crimson+Text" rel="stylesheet">
-  <link rel="stylesheet" type="text/css" href="/css/styles.css">
+  <link rel="stylesheet" type="text/css" href="/assets/css/styles.css">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
-  <script type="text/javascript" src="/js/hammer.min.js"></script>
-  <script type='text/javascript' src='//platform-api.sharethis.com/js/sharethis.js#property=5b77128cd6248b00118037d1&product=inline-share-buttons' async='async'></script>
   
 </head>
 
 <body>
+  {{> nav-header}}
   {{{body}}}
 
-  <script type="text/javascript" src="/js/app.js"></script>
+  <script type="text/javascript" src="/assets/js/ted.js"></script>
 </body>
 
 </html>

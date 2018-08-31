@@ -31,6 +31,14 @@ var TalkSchema = new Schema({
     image_url: {
         type: String,
         required: true
+    },
+    date: {
+        type: Date,
+        default: Date.now
+    },
+    saved: {
+        type: Boolean,
+        default: false
     }
 });
 
