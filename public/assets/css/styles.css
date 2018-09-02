@@ -122,6 +122,36 @@ a:hover {
     text-decoration: none;
 }
 
+#new-talks-message {
+    width: 100%;
+    text-align: center;
+    padding: 20px 0px;
+    position: fixed;
+    bottom: 0;
+    background-color: #FF1666;
+    color: #fff;
+    z-index: 20;
+    display: none;
+}
+
+.bottom-message-text {
+    font-weight: bold;
+    font-size: 1.2rem;
+    padding-right: 5px;
+}
+
+.reload-page-btn, .dismiss-btn {
+    border-radius: 25px;
+    border: none;
+    background-color: #fff;
+    color: #FF1666;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 5px 20px;
+    margin: 0px 5px;
+}
+
 
 
 

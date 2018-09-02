@@ -4,10 +4,22 @@
 
 function getRecentArticles() {
     $.get("/api/recent-talks", function(response) {
+
         if (response !== null) {
             for (var i = 0; i < response.length; i++) {
                 displayRecentTalk(response[i]);
             }
+        }
+    });
+}
+
+function scrapeTalks() {
+    $.get("/api/scrape", function(response) {
+
+        if (response === "new talk") {
+            $("#new-talks-message").fadeIn(1000);
+        } else {
+            console.log("No new talks are available");
         }
     });
 }
@@ -37,9 +49,9 @@ function createTalkContainer(talk) {
     // create the favorite icon for the Talk
     // use the favorited icon if the Talk has been saved
     if (talk.saved) {
-        var favoriteIcon = $('<img class="overlay-icon favorite-icon" data-id="' + talk._id + '" src="/assets/images/favorite-icon.svg">');
+        var favoriteIcon = $('<img class="overlay-icon favorite-icon" data-id="' + talk._id + '" data-status="saved" src="/assets/images/favorite-icon.svg">');
     } else {
-        var favoriteIcon = $('<img class="overlay-icon favorite-icon" data-id="' + talk._id + '" src="/assets/images/add-favorite-icon.svg">');
+        var favoriteIcon = $('<img class="overlay-icon favorite-icon" data-id="' + talk._id + '" data-status="unsaved" src="/assets/images/add-favorite-icon.svg">');
     }
 
     // append the components to the talk container
@@ -70,12 +82,53 @@ function displayFavoriteTalk(talk) {
     talkContainer.appendTo('#favorite-talks-container');
 }
 
+
+
+// ==============================================================================
+// Functions for Favoriting a Talk
+// ==============================================================================
+
+function saveArticle(id) {
+
+    $.post("/api/save-talk/" + id, function(response) {
+        location.reload();
+    });
+}
+
+function unsaveArticle(id) {
+
+    $.post("api/unsave-talk/" + id, function(resposne) {
+        location.reload();
+    });
+}
+
+
 // ==============================================================================
 // Event Listeners
 // ==============================================================================
 
-$(document).on("click", ".favorite-icon", function() {
+$(document).on("click", ".favorite-icon", function(event) {
+    event.preventDefault();
 
+    var talkId = $(this).attr("data-id");
+    var talkStatus = $(this).attr("data-status");
+
+    if (talkStatus === "saved") {
+        unsaveArticle(talkId);
+    }
+
+    if (talkStatus === "unsaved") {
+        saveArticle(talkId);
+    }
+});
+
+$(document).on("click", ".reload-page-btn", function(event) {
+    location.reload();
+});
+
+$(document).on("click", ".dismiss-btn", function(event) {
+    event.preventDefault();
+    $("#new-talks-message").fadeOut(500);
 })
 
 // ==============================================================================
@@ -85,11 +138,11 @@ $(document).on("click", ".favorite-icon", function() {
 $(function() {
     if (document.getElementById("recent-page")) {
         getRecentArticles();
+        scrapeTalks();
     }
 
     if (document.getElementById("favorites-page")) {
         getFavoritesArticles();
     }
     
-    // scrapeTalks();
 });

@@ -36,7 +36,7 @@ module.exports = function(app) {
         res.render("favorites", displayObj);
     });
 
-    app.get("/scrape", function(req, res) {
+    app.get("/api/scrape", function(req, res) {
         request("https://www.ted.com/talks", function(error, response, html) {
 
             var $ = cheerio.load(html);
@@ -88,12 +88,14 @@ module.exports = function(app) {
                             console.log(err);
                         } else {
                             console.log(response);
+                            
+                            res.write("new talk");
                         }
                     }
                 );
             });
         });
-        res.json({ scraped: true });
+        // res.json({ scraped: true });
     });
 
     app.get("/api/all-talks", function(req, res) {
@@ -117,9 +119,35 @@ module.exports = function(app) {
     });
 
     app.get("/api/saved-talks", function(req, res) {
-        db.Talk.find({}).limit(20)
+        db.Talk.find({saved: true}).limit(20)
         .then(function(dbTalks) {
             res.json(dbTalks);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+    });
+
+    app.post("/api/save-talk/:id", function(req, res) {
+        
+        var talkId = req.params.id;
+
+        db.Talk.findByIdAndUpdate(talkId, {saved: true})
+        .then(function(dbTalk) {
+            res.json(dbTalk);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+    });
+
+    app.post("/api/unsave-talk/:id", function(req, res) {
+
+        var talkId = req.params.id;
+
+        db.Talk.findByIdAndUpdate(talkId, {saved: false})
+        .then(function(dbTalk) {
+            res.json(dbTalk);
         })
         .catch(function(err) {
             res.json(err);
