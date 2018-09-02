@@ -1,25 +1,44 @@
 // ==============================================================================
+// Global Variables
+// ==============================================================================
+
+var startingTalkCount;
+var talkCountInt;
+
+// ==============================================================================
 // Functions to Populate Pages with Talks
 // ==============================================================================
 
-function getRecentArticles() {
-    $.get("/api/recent-talks", function(response) {
+// function getRecentArticles() {
+//     $.get("/api/recent-talks", function(response) {
 
-        if (response !== null) {
-            for (var i = 0; i < response.length; i++) {
-                displayRecentTalk(response[i]);
-            }
-        }
-    });
+//         if (response !== null) {
+//             for (var i = 0; i < response.length; i++) {
+//                 displayRecentTalk(response[i]);
+//             }
+//         }
+//     });
+// }
+
+function storeTalkCount() {
+    startingTalkCount = $("#recent-talks-container").attr("data-count");
+    talkCountInt = parseInt(startingTalkCount);
+    console.log(talkCountInt);
 }
 
 function scrapeTalks() {
     $.get("/api/scrape", function(response) {
+        setTimeout(getTalkCount, 1000);
+    });
+}
 
-        if (response === "new talk") {
-            $("#new-talks-message").fadeIn(1000);
+function getTalkCount() {
+    $.get("/api/talk-count", function(response) {
+        console.log(response);
+        if (response === talkCountInt) {
+            console.log("no new talks");
         } else {
-            console.log("No new talks are available");
+            $("#new-talks-message").fadeIn(1000);
         }
     });
 }
@@ -64,14 +83,14 @@ function createTalkContainer(talk) {
 
 }
 
-function displayRecentTalk(talk) {
+// function displayRecentTalk(talk) {
 
-    // create the talk container
-    var talkContainer = createTalkContainer(talk);
+//     // create the talk container
+//     var talkContainer = createTalkContainer(talk);
 
-    // append the talk container to the recent-talks-container
-    talkContainer.appendTo('#recent-talks-container');
-}
+//     // append the talk container to the recent-talks-container
+//     talkContainer.appendTo('#recent-talks-container');
+// }
 
 function displayFavoriteTalk(talk) {
 
@@ -81,8 +100,6 @@ function displayFavoriteTalk(talk) {
     // append the talk container to the favorite-talks-container
     talkContainer.appendTo('#favorite-talks-container');
 }
-
-
 
 // ==============================================================================
 // Functions for Favoriting a Talk
@@ -101,7 +118,6 @@ function unsaveArticle(id) {
         location.reload();
     });
 }
-
 
 // ==============================================================================
 // Event Listeners
@@ -137,7 +153,7 @@ $(document).on("click", ".dismiss-btn", function(event) {
 
 $(function() {
     if (document.getElementById("recent-page")) {
-        getRecentArticles();
+        storeTalkCount();
         scrapeTalks();
     }
 

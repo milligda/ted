@@ -7,7 +7,32 @@
             <h3>Most Recent</h3>
         </div>
         
-        <div id="recent-talks-container" class="talks-container">
+        <div id="recent-talks-container" class="talks-container" data-count="{{totalTalks}}">
+            {{#each recentTalks}}
+
+                <div class="talk">
+                    <div class="main-talk-image-container">
+                        <a href="{{url}}">
+                            <img class="main-talk-image" src="{{image_url}}">
+                            <p class="overlay-duration">{{talk_length}}</p>
+                        </a>
+
+                        {{#if saved}}
+                            <img class="overlay-icon favorite-icon" data-id="{{_id}}" data-status="saved" src="/assets/images/favorite-icon.svg">
+                        {{/if}}
+
+                        {{#unless saved}}
+                            <img class="overlay-icon favorite-icon" data-id="{{_id}}" data-status="unsaved" src="/assets/images/add-favorite-icon.svg">
+                        {{/unless}}
+
+                    </div>
+                    <a href="{{url}}">
+                        <h4 class="main-talk-title">{{title}}</h4>
+                        <p class="main-talk-presenter">{{presenter}}</p>
+                    </a>
+                </div>
+
+            {{/each}}
         </div>
     </div>
 

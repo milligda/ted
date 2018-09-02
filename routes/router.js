@@ -20,11 +20,26 @@ mongoose.connect("mongodb://localhost/tedTalks");
 module.exports = function(app) {
     app.get("/", function(req, res) {
 
-        var displayObj = {
-            title: "Recent Talks",
-        }
-
-        res.render("recent", displayObj);
+        // count the records in the database
+        db.Talk.count({}, function(err, count) {
+           
+            // pull the latest 20 talks from the database
+            db.Talk.find({}).limit(20)
+            .then(function(dbTalks) {
+                
+                // create the display object
+                var displayObj = {
+                    title: "Recent Talks",
+                    totalTalks: count,
+                    recentTalks: dbTalks
+                }
+        
+                res.render("recent", displayObj);    
+            })
+            .catch(function(err) {
+                res.json(err);
+            });
+        });
     });
 
     app.get("/favorites", function(req, res) {
@@ -87,15 +102,21 @@ module.exports = function(app) {
                         if (err) {
                             console.log(err);
                         } else {
-                            console.log(response);
-                            
-                            res.write("new talk");
+                            res.status(200);
+                            res.end();
                         }
                     }
                 );
             });
         });
         // res.json({ scraped: true });
+    });
+
+    app.get("/api/talk-count", function(req, res) {
+        db.Talk.count({}, function(err, count) {
+            if (err) throw err;
+            res.json(count);
+        });
     });
 
     app.get("/api/all-talks", function(req, res) {
