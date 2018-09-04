@@ -56,7 +56,7 @@ a:hover {
     padding-bottom: 40px;
 }
 
-.talks-container {
+.talks-container, .comment-container {
     width: 800px;
     max-width: 98vw;
     margin: 0px auto;
@@ -78,6 +78,11 @@ a:hover {
     margin: 30px;
 }
 
+.comments-header {
+    margin-top: 30px;
+    color: #FF1666;
+}
+
 .main-talk-image-container {
     position: relative;
 }
@@ -91,6 +96,15 @@ a:hover {
     position: absolute;
     top: 10px;
     right: 10px;
+    width: 50px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+.overlay-comment-icon {
+    position: absolute;
+    top: 10px;
+    right: 70px;
     width: 50px;
     cursor: pointer;
     z-index: 10;
@@ -140,7 +154,7 @@ a:hover {
     padding-right: 5px;
 }
 
-.reload-page-btn, .dismiss-btn {
+.reload-page-btn, .dismiss-btn, .submit-btn {
     border-radius: 25px;
     border: none;
     background-color: #fff;
@@ -151,6 +165,45 @@ a:hover {
     padding: 5px 20px;
     margin: 0px 5px;
 }
+
+.submit-btn {
+    background-color: #FF1666;
+    color: #fff;
+}
+
+#individual-talk-container {
+    padding: 20px 0px 0px 0px;
+}
+
+.comment {
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 10px;
+    background-color: #fff;
+    margin: 5px 0px;
+}
+
+.comment > p {
+    margin: 0;
+}
+
+.comment-author {
+    font-weight: bold;
+}
+
+.comment-delete {
+    font-style: italic;
+    color: #888888;
+    cursor: pointer;
+}
+
+.no-comments-message {
+    font-weight: bold;
+}
+
+
+
+
 
 
 

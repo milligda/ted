@@ -29,7 +29,7 @@ module.exports = function(app) {
                 
                 // create the display object
                 var displayObj = {
-                    title: "Recent Talks",
+                    pageTitle: "Recent Talks",
                     totalTalks: count,
                     recentTalks: dbTalks
                 }
@@ -45,18 +45,34 @@ module.exports = function(app) {
     app.get("/favorites", function(req, res) {
 
         var displayObj = {
-            title: "Favorite Talks",
+            pageTitle: "Favorite Talks",
         }
 
         res.render("favorites", displayObj);
+    });
+
+    app.get("/talk/:id", function(req, res) {
+
+        db.Talk.findById(req.params.id)
+        .then(function(dbTalk) {
+
+            // create the display object
+            var displayObj = {
+                pageTitle: "Talk",
+                talk: dbTalk
+            }
+    
+            res.render("talk-page", displayObj);    
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
     });
 
     app.get("/api/scrape", function(req, res) {
         request("https://www.ted.com/talks", function(error, response, html) {
 
             var $ = cheerio.load(html);
-
-            var newTalks = [];
 
             $("div.talk-link").each(function(i, element, newPosts) {
 
@@ -109,7 +125,6 @@ module.exports = function(app) {
                 );
             });
         });
-        // res.json({ scraped: true });
     });
 
     app.get("/api/talk-count", function(req, res) {
@@ -121,6 +136,7 @@ module.exports = function(app) {
 
     app.get("/api/all-talks", function(req, res) {
         db.Talk.find({})
+        .populate("comments")
         .then(function(dbTalks) {
             res.json(dbTalks);
         })
@@ -140,9 +156,19 @@ module.exports = function(app) {
     });
 
     app.get("/api/saved-talks", function(req, res) {
-        db.Talk.find({saved: true}).limit(20)
+        db.Talk.find({ saved: true }).limit(20)
         .then(function(dbTalks) {
             res.json(dbTalks);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+    });
+
+    app.get("/api/comments", function(req, res) {
+        db.Comment.find({})
+        .then(function(dbComments) {
+            res.json(dbComments);
         })
         .catch(function(err) {
             res.json(err);
@@ -153,7 +179,7 @@ module.exports = function(app) {
         
         var talkId = req.params.id;
 
-        db.Talk.findByIdAndUpdate(talkId, {saved: true})
+        db.Talk.findByIdAndUpdate(talkId, { saved: true })
         .then(function(dbTalk) {
             res.json(dbTalk);
         })
@@ -166,7 +192,7 @@ module.exports = function(app) {
 
         var talkId = req.params.id;
 
-        db.Talk.findByIdAndUpdate(talkId, {saved: false})
+        db.Talk.findByIdAndUpdate(talkId, { saved: false })
         .then(function(dbTalk) {
             res.json(dbTalk);
         })
@@ -174,4 +200,34 @@ module.exports = function(app) {
             res.json(err);
         });
     });
+
+    app.post("/api/comment/:id", function(req, res) {
+
+        var talkId = req.params.id;
+
+        db.Comment.create(req.body)
+        .then(function(dbComment) {
+            return db.Talk.findByIdAndUpdate(talkId, { $push: { comments: dbComment._id }}, { new: true });
+        })
+        .then(function(dbTalk) {
+            res.json(dbTalk);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+    });
+
+    app.get("/api/talk-comments/:id", function(req, res) {
+
+        var talkId = req.params.id;
+
+        db.Talk.findById(talkId)
+        .populate("comments")
+        .then(function(dbTalk) {
+            res.json(dbTalk.comments);
+        })
+        .catch(function(err) {
+            res.json(err);
+        });
+    })
 }

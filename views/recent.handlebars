@@ -25,6 +25,10 @@
                             <img class="overlay-icon favorite-icon" data-id="{{_id}}" data-status="unsaved" src="/assets/images/add-favorite-icon.svg">
                         {{/unless}}
 
+                        <a href="/talk/{{_id}}">
+                            <img class="overlay-comment-icon comment-icon" src="/assets/images/no-comments-icon.svg">
+                        </a>
+
                     </div>
                     <a href="{{url}}">
                         <h4 class="main-talk-title">{{title}}</h4>
@@ -43,3 +47,4 @@
     <button class="reload-page-btn">Yes</button>
     <button class="dismiss-btn">No</button>
 </div>
+

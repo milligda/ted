@@ -1,0 +1,60 @@
+<div id="talk-page" data-id="{{talk._id}}" class="page-container">
+
+    <div class="page-body-container">
+        
+        <div id="individual-talk-container" class="talks-container">
+
+            <div class="talk">
+                <div class="main-talk-image-container">
+                    <a href="{{talk.url}}">
+                        <img class="main-talk-image" src="{{talk.image_url}}">
+                        <p class="overlay-duration">{{talk.talk_length}}</p>
+                    </a>
+
+                    {{#if talk.saved}}
+                        <img class="overlay-icon favorite-icon" data-id="{{talk._id}}" data-status="saved" src="/assets/images/favorite-icon.svg">
+                    {{/if}}
+
+                    {{#unless talk.saved}}
+                        <img class="overlay-icon favorite-icon" data-id="{{talk._id}}" data-status="unsaved" src="/assets/images/add-favorite-icon.svg">
+                    {{/unless}}
+
+                    <a href="/talk/{{talk._id}}">
+                        <img class="overlay-comment-icon comment-icon" src="/assets/images/no-comments-icon.svg">
+                    </a>
+
+                </div>
+                <a href="{{talk.url}}">
+                    <h4 class="main-talk-title">{{talk.title}}</h4>
+                    <p class="main-talk-presenter">{{talk.presenter}}</p>
+                </a>
+            </div>
+
+        </div>
+
+        <div class="comment-container">
+
+            <div class="comments-container-title">
+                <h4 class="comments-header">Post A Comment</h4>
+            </div>
+
+            <div class="add-comment-container">
+                <form>
+                    <div class="form-group">
+                        <input type="text" class="form-control" id="commentNameInput" placeholder="Name (e.g. Jane Doe)">
+                    </div>
+                    <div class="form-group">
+                        <textarea class="form-control" id="commentInput" rows="4" placeholder="Comment"></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn" data-id="{{talk._id}}">Post</button>
+                    </form>
+            </div>
+
+            <h4 class="comments-header">Recent Comments</h4>
+
+            <div class="all-comments-container">
+            </div>
+        </div>
+
+    </div>
+</div>

@@ -39,7 +39,13 @@ var TalkSchema = new Schema({
     saved: {
         type: Boolean,
         default: false
-    }
+    },
+    comments: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: "Comment"
+        }
+    ]
 });
 
 // ==============================================================================

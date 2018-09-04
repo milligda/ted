@@ -2,5 +2,5 @@
 
 module.exports = {
   Talk: require("./Talk"),
-  // Note: require("./Note")
+  Comment: require("./Comment")
 };

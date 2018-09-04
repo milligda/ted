@@ -53,7 +53,7 @@ function getFavoritesArticles() {
     });
 }
 
-function createTalkContainer(talk) {
+function populateTalks(talk) {
 
     // create the components for the Talk
     var talkContainer = $('<div class="talk">');
@@ -86,7 +86,7 @@ function createTalkContainer(talk) {
 // function displayRecentTalk(talk) {
 
 //     // create the talk container
-//     var talkContainer = createTalkContainer(talk);
+//     var talkContainer = populateTalks(talk);
 
 //     // append the talk container to the recent-talks-container
 //     talkContainer.appendTo('#recent-talks-container');
@@ -95,10 +95,51 @@ function createTalkContainer(talk) {
 function displayFavoriteTalk(talk) {
 
     // create the talk container
-    var talkContainer = createTalkContainer(talk);
+    var talkContainer = populateTalks(talk);
 
     // append the talk container to the favorite-talks-container
     talkContainer.appendTo('#favorite-talks-container');
+}
+
+// ==============================================================================
+// Functions to Populate Comments
+// ==============================================================================
+
+function getTalkComments(id) {
+
+    // empty the comments container
+    $(".all-comments-container").empty();
+
+    $.get("/api/talk-comments/" + id, function(response) {
+        console.log(response);
+
+        if (response.length > 0) {
+            populateComments(response);
+        } else {
+            displayNoCommentsMessage();
+        }
+    });
+}
+
+function populateComments(commentsArr) {
+
+    // for each comment in the comments array create the comment
+    for (var i = 0; i < commentsArr.length; i++) {
+
+        // create the components for the comment
+        var commentContainer = $('<div class="comment">');
+        var authorAndDelete = $('<p><span class="comment-author">' + commentsArr[i].user + '</span> <span data-id="' + commentsArr[i]._id + '" class="comment-delete">(remove as inappropriate)</span></p>');
+        var commentBody = $('<p class="comment-body">').text(commentsArr[i].body);
+
+        // append the components to the all-comments-container
+        commentContainer.append(authorAndDelete).append(commentBody);
+        commentContainer.appendTo(".all-comments-container");
+    }
+}
+
+function displayNoCommentsMessage() {
+    var message = $('<p class="no-comments-message">').text("This TED talk does not have any comments yet.");
+    message.appendTo(".all-comments-container");
 }
 
 // ==============================================================================
@@ -145,7 +186,35 @@ $(document).on("click", ".reload-page-btn", function(event) {
 $(document).on("click", ".dismiss-btn", function(event) {
     event.preventDefault();
     $("#new-talks-message").fadeOut(500);
-})
+});
+
+$(document).on("click", ".submit-btn", function(event) {
+    event.preventDefault();
+    var talkId = $(this).attr("data-id");
+
+    $.ajax({
+        method: "POST",
+        url: "/api/comment/" + talkId,
+        data: {
+            user: $("#commentNameInput").val().trim(),
+            body: $("#commentInput").val().trim()
+        }
+    })
+    .then(function(response) {
+        console.log(response);
+
+        // re-populate the comments container
+        getTalkComments(talkId);
+    });
+
+    $("#commentNameInput").val("");
+    $("#commentInput").val("");
+});
+
+function getTalkId() {
+    var talkId = window.location.href.replace('http://localhost:3000/talk/', '');
+    return talkId;
+}
 
 // ==============================================================================
 // Page Load Processes
@@ -159,6 +228,13 @@ $(function() {
 
     if (document.getElementById("favorites-page")) {
         getFavoritesArticles();
+    }
+
+    if (document.getElementById("talk-page")) {
+        var talkId = getTalkId();
+
+        console.log(talkId);
+        getTalkComments(talkId);
     }
     
 });
