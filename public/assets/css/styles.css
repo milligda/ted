@@ -197,6 +197,10 @@ a:hover {
     cursor: pointer;
 }
 
+.comment-delete:hover {
+    color: red;
+}
+
 .no-comments-message {
     font-weight: bold;
 }

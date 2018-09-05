@@ -18,6 +18,8 @@ mongoose.connect("mongodb://localhost/tedTalks");
 // ==============================================================================
 
 module.exports = function(app) {
+
+    // Home page (Recent Talks page) 
     app.get("/", function(req, res) {
 
         // count the records in the database
@@ -42,6 +44,8 @@ module.exports = function(app) {
         });
     });
 
+    // Community Favorites Page
+    // Favorited Talks are pulled through an AJAX call when the page loads
     app.get("/favorites", function(req, res) {
 
         var displayObj = {
@@ -51,6 +55,7 @@ module.exports = function(app) {
         res.render("favorites", displayObj);
     });
 
+    // Individual Talk Page 
     app.get("/talk/:id", function(req, res) {
 
         db.Talk.findById(req.params.id)
@@ -69,6 +74,7 @@ module.exports = function(app) {
         });
     });
 
+    // Scrapes the TED Talks site and stores any new talks
     app.get("/api/scrape", function(req, res) {
         request("https://www.ted.com/talks", function(error, response, html) {
 
@@ -110,6 +116,8 @@ module.exports = function(app) {
                 result.presenter = presenter;
                 result.image_url = imageUrl;
 
+                // check if the Talk already exists in the database
+                // if it doesn't, update the database
                 db.Talk.findOneAndUpdate(
                     { "url": url },
                     result,
@@ -127,6 +135,7 @@ module.exports = function(app) {
         });
     });
 
+    // get the number of Talks in the database
     app.get("/api/talk-count", function(req, res) {
         db.Talk.count({}, function(err, count) {
             if (err) throw err;
@@ -134,6 +143,7 @@ module.exports = function(app) {
         });
     });
 
+    // get all Talks from the database and their corresponding comments
     app.get("/api/all-talks", function(req, res) {
         db.Talk.find({})
         .populate("comments")
@@ -145,6 +155,7 @@ module.exports = function(app) {
         });
     });
 
+    // get the last 20 Talks from the database
     app.get("/api/recent-talks", function(req, res) {
         db.Talk.find({}).limit(20)
         .then(function(dbTalks) {
@@ -155,6 +166,7 @@ module.exports = function(app) {
         });
     });
 
+    // get the last 20 Favorited Talks from the database 
     app.get("/api/saved-talks", function(req, res) {
         db.Talk.find({ saved: true }).limit(20)
         .then(function(dbTalks) {
@@ -165,6 +177,7 @@ module.exports = function(app) {
         });
     });
 
+    // get all the comments from the database
     app.get("/api/comments", function(req, res) {
         db.Comment.find({})
         .then(function(dbComments) {
@@ -175,6 +188,7 @@ module.exports = function(app) {
         });
     });
 
+    // update a Talk with saved = true
     app.post("/api/save-talk/:id", function(req, res) {
         
         var talkId = req.params.id;
@@ -188,6 +202,7 @@ module.exports = function(app) {
         });
     });
 
+    // update a Talk with saved = false
     app.post("/api/unsave-talk/:id", function(req, res) {
 
         var talkId = req.params.id;
@@ -201,13 +216,17 @@ module.exports = function(app) {
         });
     });
 
+    // store a new comment in the database and update the corresponding Talk
     app.post("/api/comment/:id", function(req, res) {
 
         var talkId = req.params.id;
 
+        // create the new comment
         db.Comment.create(req.body)
         .then(function(dbComment) {
-            return db.Talk.findByIdAndUpdate(talkId, { $push: { comments: dbComment._id }}, { new: true });
+            
+            // after the comment has been created, update the Talk associated with the comment
+            return db.Talk.findByIdAndUpdate(talkId, { $push: { comments: dbComment._id }, $set: { hasComments: true }}, { new: true });
         })
         .then(function(dbTalk) {
             res.json(dbTalk);
@@ -217,6 +236,7 @@ module.exports = function(app) {
         });
     });
 
+    // Get all the comments associated with a Talk
     app.get("/api/talk-comments/:id", function(req, res) {
 
         var talkId = req.params.id;
@@ -229,5 +249,33 @@ module.exports = function(app) {
         .catch(function(err) {
             res.json(err);
         });
-    })
+    });
+
+    // Delete a comment from the database and update the corresponding Talk
+    app.post("/api/delete-comment/:id", function(req, res) {
+
+        var talkId = req.params.id;
+        var commentId = req.body.commentId;
+
+        // remove the comment from the Talk's comments array
+        db.Talk.findByIdAndUpdate(talkId, { $pull: { comments: commentId }}, { new: true })
+        .then(function(dbTalk) {
+
+            console.log(dbTalk);
+            
+            // check if there are still 1 or more comments
+            if (dbTalk.comments.length === 0) {
+                db.Talk.findByIdAndUpdate(talkId, { hasComments: false })
+                .then(function(dbTalkRevised) {
+                    console.log(dbTalkRevised)
+                });
+            }
+
+            // remove the comment from the database
+            db.Comment.findByIdAndRemove(commentId)
+            .then(function(dbComment) {
+                res.json(dbComment);
+            });
+        });
+    });
 }

@@ -6,7 +6,7 @@
 
             <div class="talk">
                 <div class="main-talk-image-container">
-                    <a href="{{talk.url}}">
+                    <a href="{{talk.url}}" target="_blank">
                         <img class="main-talk-image" src="{{talk.image_url}}">
                         <p class="overlay-duration">{{talk.talk_length}}</p>
                     </a>
@@ -20,11 +20,17 @@
                     {{/unless}}
 
                     <a href="/talk/{{talk._id}}">
-                        <img class="overlay-comment-icon comment-icon" src="/assets/images/no-comments-icon.svg">
+                        {{#if talk.hasComments}}
+                            <img class="overlay-comment-icon comment-icon" src="/assets/images/has-comments-icon.svg">
+                        {{/if}}
+
+                        {{#unless talk.hasComments}}
+                            <img class="overlay-comment-icon comment-icon" src="/assets/images/no-comments-icon.svg">
+                        {{/unless}}
                     </a>
 
                 </div>
-                <a href="{{talk.url}}">
+                <a href="{{talk.url}}" target="_blank">
                     <h4 class="main-talk-title">{{talk.title}}</h4>
                     <p class="main-talk-presenter">{{talk.presenter}}</p>
                 </a>
@@ -53,7 +59,7 @@
             <h4 class="comments-header">Recent Comments</h4>
 
             <div class="all-comments-container">
-            </div>
+           </div>
         </div>
 
     </div>

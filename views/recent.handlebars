@@ -12,7 +12,7 @@
 
                 <div class="talk">
                     <div class="main-talk-image-container">
-                        <a href="{{url}}">
+                        <a href="{{url}}" target="_blank">
                             <img class="main-talk-image" src="{{image_url}}">
                             <p class="overlay-duration">{{talk_length}}</p>
                         </a>
@@ -26,11 +26,17 @@
                         {{/unless}}
 
                         <a href="/talk/{{_id}}">
-                            <img class="overlay-comment-icon comment-icon" src="/assets/images/no-comments-icon.svg">
+                            {{#if hasComments}}
+                                <img class="overlay-comment-icon comment-icon" src="/assets/images/has-comments-icon.svg">
+                            {{/if}}
+
+                            {{#unless hasComments}}
+                                <img class="overlay-comment-icon comment-icon" src="/assets/images/no-comments-icon.svg">
+                            {{/unless}}
                         </a>
 
                     </div>
-                    <a href="{{url}}">
+                    <a href="{{url}}" target="_blank">
                         <h4 class="main-talk-title">{{title}}</h4>
                         <p class="main-talk-presenter">{{presenter}}</p>
                     </a>

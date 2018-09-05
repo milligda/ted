@@ -45,7 +45,11 @@ var TalkSchema = new Schema({
             type: Schema.Types.ObjectId,
             ref: "Comment"
         }
-    ]
+    ],
+    hasComments: {
+        type: Boolean,
+        default: false
+    }
 });
 
 // ==============================================================================
