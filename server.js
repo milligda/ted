@@ -5,6 +5,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var exphbs = require("express-handlebars");
+var mongoose = require("mongoose");
 
 // ==============================================================================
 // Express Setup
@@ -20,6 +21,19 @@ app.use(express.static("public"));
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+
+// ==============================================================================
+// Database Setup
+// ==============================================================================
+
+// local MongoDB URI
+var databaseUri = 'mongodb://localhost/tedTalks';
+
+if (process.env.MONGODB_URI) {
+    mongoose.connect(process.env.MONGODB_URI);
+} else {
+    mongoose.connect(databaseUri);
+}
 
 // ==============================================================================
 // Handlebars Setup

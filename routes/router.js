@@ -5,13 +5,6 @@
 var db = require("../models");
 var request = require("request");
 var cheerio = require("cheerio");
-var mongoose = require("mongoose");
-
-// ==============================================================================
-// Connect to MongoDB
-// ==============================================================================
-
-mongoose.connect("mongodb://localhost/tedTalks");
 
 // ==============================================================================
 // Routes
